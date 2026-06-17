@@ -1,0 +1,8 @@
+--- ARABIC (Modern Standard) ---
+نظام الطابور في دوريك يعمل بطريقة إلكترونية. عند وصول المريض، يسجل اسمه ونوع الخدمة المطلوبة ويحصل على رقم في الطابور. يتم استدعاء المرضى بالترتيب حسب رقم الطابور. يمكن للمريض متابعة موقعه في الطابور عبر الشاشة الرئيسية أو عبر التطبيق. في حال غياب المريض عند استدعائه، ينتقل إلى نهاية الطابور تلقائياً.
+
+--- TUNISIAN DARIJA ---
+نظام الطابور متاع دوريك يخدم بطريقة إلكترونية. كي يوصل المريض، يسجل اسمو ونوع الخدمة اللي يحتاجها ويولي عندو نمرة في الطابور. المرضى يتعيطلهم بالترتيب على حسب النمرة متاعهم. المريض يقدر يتبع وين هو في الطابور من الشاشة الكبيرة ولا من التطبيق. كي يتعيطلو وما يجيش، نمرتو تمشي للآخر بشكل أوتوماتيكي.
+
+--- FRENCH ---
+Le système de file d'attente de Dawrek fonctionne électroniquement. À l'arrivée, le patient enregistre son nom et le type de service souhaité et reçoit un numéro dans la file. Les patients sont appelés dans l'ordre de leur numéro. Le patient peut suivre sa position dans la file via l'écran principal ou via l'application. En cas d'absence lors de l'appel, le numéro est automatiquement déplacé en fin de file.

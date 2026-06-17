@@ -1,0 +1,8 @@
+--- ARABIC (Modern Standard) ---
+متوسط وقت الانتظار يتراوح بين 15 و45 دقيقة حسب نوع الخدمة وعدد المرضى. أوقات الذروة هي من 8 صباحاً حتى 10 صباحاً ومن 2 ظهراً حتى 4 عصراً. خارج أوقات الذروة، يكون الانتظار أقل من 20 دقيقة في الغالب. يتم حساب وقت الانتظار المتوقع بناءً على عدد المرضى أمامك ومتوسط وقت الخدمة لكل مريض.
+
+--- TUNISIAN DARIJA ---
+وقت الانتظار المعدل بين 15 و45 دقيقة على حسب نوع الخدمة وعدد المرضى. أوقات الزحمة هوما من 8 الصباح لـ10 ومن 2 الزوال لـ4 العشية. برا أوقات الزحمة، العادة الانتظار ما يعديش 20 دقيقة. وقت الانتظار يتحسب على أساس عدد الناس اللي قبالك ومعدل وقت الخدمة لكل مريض.
+
+--- FRENCH ---
+Le temps d'attente moyen est entre 15 et 45 minutes selon le type de service et le nombre de patients. Les heures de pointe sont de 8h à 10h et de 14h à 16h. En dehors des heures de pointe, l'attente est généralement inférieure à 20 minutes. Le temps d'attente estimé est calculé selon le nombre de patients devant vous et le temps de service moyen par patient.

@@ -1,0 +1,26 @@
+--- ARABIC (Modern Standard) ---
+الخدمات المتاحة في دوريك:
+1. الاستشارة العامة: مراجعة طبية عامة مع طبيب عام.
+2. المتابعة الطبية: متابعة حالات مزمنة أو علاج مستمر.
+3. التحاليل المخبرية: أخذ العينات وإرسالها للمختبر.
+4. الأشعة والتصوير: طلبات الأشعة السينية والإيكو.
+5. الطوارئ: للحالات العاجلة فقط، لا تحتاج موعداً مسبقاً.
+6. الخدمات الإدارية: استخراج وثائق، شهادات طبية، تجديد ملفات.
+
+--- TUNISIAN DARIJA ---
+الخدمات المتاحة في دوريك:
+1. الاستشارة العامة: مراجعة عند دكتور عام.
+2. المتابعة الطبية: للأمراض المزمنة ولا العلاج المستمر.
+3. تحاليل: ياخذو العينة ويبعثوها للمخبر.
+4. أشعة وإيكو: طلبات التصوير الطبي.
+5. الطوارئ: للحالات العاجلة برك، ما تحتاجش موعد.
+6. الخدمات الإدارية: استخراج وثائق، شهادات، تجديد ملفات.
+
+--- FRENCH ---
+Services disponibles sur Dawrek :
+1. Consultation générale : consultation médicale avec un médecin généraliste.
+2. Suivi médical : suivi de maladies chroniques ou traitement continu.
+3. Analyses de laboratoire : prélèvement d'échantillons et envoi au laboratoire.
+4. Radiologie et imagerie : demandes de radiographies et d'échographies.
+5. Urgences : pour les cas urgents uniquement, sans rendez-vous nécessaire.
+6. Services administratifs : extraction de documents, certificats médicaux, renouvellement de dossiers.
