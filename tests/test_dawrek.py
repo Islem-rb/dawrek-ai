@@ -98,6 +98,7 @@ def test_offline_answer_uses_knowledge_base_in_user_language():
 def client(monkeypatch):
     monkeypatch.setattr(main, "queue", QueueEngine())
     monkeypatch.setattr(main.assistant, "client", None)  # never hit the network in tests
+    monkeypatch.setattr(main, "STAFF_PIN", "")  # ignore a PIN set in the local .env
     return TestClient(main.app)
 
 
