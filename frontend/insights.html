@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawrek · Insights</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230e7c6b'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>D</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="insights">
+  <header class="staff-top">
+    <a class="brand" href="/insights"><span class="brand-mark">د</span><span>Dawrek <small data-i18n="insTitle"></small></span></a>
+    <span class="pill" id="source"></span>
+    <span class="spacer"></span>
+    <button class="btn btn-soft" id="simulate">🧪 <span data-i18n="simulateDay"></span></button>
+    <button class="btn btn-ghost hidden" id="clear-sim" data-i18n="clearSim"></button>
+    <a class="btn btn-soft" href="/staff">🧑‍⚕️ <span data-i18n="staffTitle"></span></a>
+    <div class="lang-switch" id="lang"></div>
+  </header>
+  <p class="ins-sub" data-i18n="insSub"></p>
+
+  <section class="card empty-state hidden" id="empty">
+    <h2 data-i18n="emptyTitle"></h2>
+    <p data-i18n="emptyText"></p>
+    <button class="btn btn-primary" id="simulate-2">🧪 <span data-i18n="simulateDay"></span></button>
+  </section>
+
+  <div id="content" class="hidden">
+    <section class="ins-kpis" id="kpis"></section>
+    <section class="ins-grid">
+      <article class="card chart-card" data-chart="hours">
+        <div class="chart-head"><h3 data-i18n="chartHours"></h3><small data-i18n="chartHoursSub"></small>
+          <button class="btn btn-soft" data-toggle data-i18n="showTable"></button></div>
+        <div class="chart-body"></div>
+      </article>
+      <article class="card chart-card">
+        <div class="chart-head"><h3>💡 <span data-i18n="recsTitle"></span></h3></div>
+        <div class="recs" id="recs"></div>
+      </article>
+    </section>
+    <section class="ins-grid three">
+      <article class="card chart-card" data-chart="services">
+        <div class="chart-head"><h3 data-i18n="chartServices"></h3>
+          <button class="btn btn-soft" data-toggle data-i18n="showTable"></button></div>
+        <div class="chart-body"></div>
+      </article>
+      <article class="card chart-card" data-chart="languages">
+        <div class="chart-head"><h3 data-i18n="chartLanguages"></h3>
+          <button class="btn btn-soft" data-toggle data-i18n="showTable"></button></div>
+        <div class="chart-body"></div>
+      </article>
+      <article class="card chart-card" data-chart="topics">
+        <div class="chart-head"><h3 data-i18n="chartTopics"></h3>
+          <button class="btn btn-soft" data-toggle data-i18n="showTable"></button></div>
+        <div class="chart-body"></div>
+      </article>
+    </section>
+  </div>
+</main>
+<div class="tooltip hidden" id="tooltip" role="tooltip"></div>
+<script src="/static/i18n.js"></script>
+<script src="/static/insights.js"></script>
+</body>
+</html>

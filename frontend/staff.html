@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawrek · Staff</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230e7c6b'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>D</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="staff">
+  <header class="staff-top">
+    <a class="brand" href="/staff"><span class="brand-mark">د</span><span>Dawrek <small data-i18n="staffTitle"></small></span></a>
+    <label class="desk-picker"><span data-i18n="desk"></span>
+      <select id="desk"></select>
+    </label>
+    <span class="spacer"></span>
+    <a class="btn btn-soft" href="/insights" target="_blank">📊 <span data-i18n="insTitle"></span></a>
+    <a class="btn btn-soft" href="/screen" target="_blank">📺 <span data-i18n="openScreen"></span></a>
+    <a class="btn btn-soft" href="/" target="_blank">📱 <span data-i18n="openPatient"></span></a>
+    <div class="lang-switch" id="lang"></div>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi"><small data-i18n="waitingList"></small><b id="k-waiting">0</b></div>
+    <div class="card kpi"><small data-i18n="served"></small><b id="k-served">0</b></div>
+    <div class="card kpi"><small data-i18n="avgWait"></small><b id="k-avg">0</b></div>
+    <div class="card kpi"><small data-i18n="noShows"></small><b id="k-noshow">0</b></div>
+  </section>
+
+  <section class="board" id="board"></section>
+
+  <footer style="display:flex; gap:8px; margin-top:18px; flex-wrap:wrap">
+    <button class="btn btn-soft" id="demo">🧪 <span data-i18n="addDemo"></span></button>
+    <button class="btn btn-danger" id="reset" data-i18n="reset"></button>
+  </footer>
+</main>
+<script src="/static/i18n.js"></script>
+<script src="/static/staff.js"></script>
+</body>
+</html>
