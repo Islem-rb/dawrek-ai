@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawrek · Screen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230e7c6b'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>D</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<main class="screen">
+  <section class="screen-main">
+    <header class="screen-head">
+      <span class="brand"><span class="brand-mark">د</span><span>Dawrek · دورك</span></span>
+      <span class="clock" id="clock"></span>
+    </header>
+    <div class="now-grid" id="now"></div>
+  </section>
+  <aside class="screen-side">
+    <div class="card qr-card">
+      <b>امسح الرمز لأخذ تذكرة</b><span class="bilingual">Scannez pour prendre un ticket</span>
+      <div id="qr"></div>
+      <div class="url" id="url"></div>
+    </div>
+    <div class="card recent">
+      <b>آخر النداءات</b><span class="bilingual">Derniers appels</span>
+      <ul id="recent"></ul>
+    </div>
+    <button class="btn btn-soft" id="sound">🔈 تفعيل الصوت · Activer le son</button>
+  </aside>
+</main>
+<script src="/static/i18n.js"></script>
+<script src="/static/screen.js"></script>
+</body>
+</html>

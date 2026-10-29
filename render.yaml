@@ -1,0 +1,13 @@
+# Render Blueprint (free plan). Render: New > Blueprint > pick this repo.
+# The free plan sleeps after 15 min idle; open the URL a minute before your demo.
+services:
+  - type: web
+    name: dawrek
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/info
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: STAFF_PIN
+        sync: false
