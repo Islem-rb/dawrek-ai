@@ -1,7 +1,7 @@
 // UI strings for every page. `tn` = Tunisian Darija, `ar` = Modern Standard Arabic.
 const I18N = {
   tn: {
-    dir: "rtl", label: "تونسي",
+    dir: "rtl", label: "تونسي", name: "تونسي · Darija",
     tagline: "طابورك في جيبك",
     heroTitle: "ما عادش تستنى واقف",
     heroText: "خوذ تيكيت من تليفونك، تبّع دورك لايف، وإسأل دورك على أي حاجة.",
@@ -33,7 +33,7 @@ const I18N = {
     screenNow: "توا يعدّيو", screenJoin: "سكاني باش تاخو تيكيت", screenSound: "شغّل الصوت", screenRecent: "آخر النداءات",
   },
   ar: {
-    dir: "rtl", label: "عربي",
+    dir: "rtl", label: "عربي", name: "العربية",
     tagline: "طابورك في جيبك",
     heroTitle: "لا مزيد من الانتظار وقوفاً",
     heroText: "احجز تذكرتك من هاتفك، تابع دورك مباشرة، واسأل المساعد عن أي شيء.",
@@ -63,7 +63,7 @@ const I18N = {
     screenNow: "يُخدم الآن", screenJoin: "امسح الرمز لأخذ تذكرة", screenSound: "تفعيل الصوت", screenRecent: "آخر النداءات",
   },
   fr: {
-    dir: "ltr", label: "FR",
+    dir: "ltr", label: "FR", name: "Français",
     tagline: "Votre file d'attente dans la poche",
     heroTitle: "Fini d'attendre debout",
     heroText: "Prenez un ticket depuis votre téléphone, suivez votre tour en direct et posez vos questions à Dawrek.",
@@ -93,7 +93,7 @@ const I18N = {
     screenNow: "En cours", screenJoin: "Scannez pour prendre un ticket", screenSound: "Activer le son", screenRecent: "Derniers appels",
   },
   en: {
-    dir: "ltr", label: "EN",
+    dir: "ltr", label: "EN", name: "English",
     tagline: "Your queue, in your pocket",
     heroTitle: "No more waiting on your feet",
     heroText: "Take a ticket from your phone, follow your turn live, and ask Dawrek anything.",
@@ -147,12 +147,12 @@ const Lang = {
     document.documentElement.dir = I18N[this.current].dir;
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = this.t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = this.t(el.dataset.i18nPlaceholder); });
-    document.querySelectorAll(".lang-switch button").forEach((b) => b.classList.toggle("active", b.dataset.lang === this.current));
+    document.querySelectorAll(".lang-switch select").forEach((s) => { s.value = this.current; });
   },
   renderSwitch(container) {
-    container.innerHTML = Object.entries(I18N)
-      .map(([k, v]) => `<button type="button" data-lang="${k}">${v.label}</button>`).join("");
-    container.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) this.set(b.dataset.lang); });
+    container.innerHTML = `<span aria-hidden="true">🌐</span><select aria-label="Language">${Object.entries(I18N)
+      .map(([k, v]) => `<option value="${k}">${v.name}</option>`).join("")}</select>`;
+    container.querySelector("select").addEventListener("change", (e) => this.set(e.target.value));
     this.apply();
   },
 };

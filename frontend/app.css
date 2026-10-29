@@ -45,9 +45,13 @@ a { color: var(--primary); }
   display: grid; place-items: center; font-size: 1.05rem; font-weight: 800; }
 .brand small { display: block; font-size: .72rem; font-weight: 600; color: var(--muted); line-height: 1.1; }
 
-.lang-switch { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 3px; gap: 2px; }
-.lang-switch button { padding: 4px 11px; border-radius: 999px; font-size: .82rem; font-weight: 700; color: var(--muted); }
-.lang-switch button.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow); }
+.lang-switch { position: relative; display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 999px; padding: 0 12px; height: 38px; }
+.lang-switch:focus-within { border-color: var(--primary); }
+.lang-switch select { appearance: none; -webkit-appearance: none; background: transparent; border: 0; outline: 0;
+  font: inherit; font-size: .88rem; font-weight: 700; color: var(--text); padding-inline-end: 16px; cursor: pointer; }
+.lang-switch select option { color: #1a1a1a; background: #fff; }
+.lang-switch::after { content: "▾"; position: absolute; inset-inline-end: 12px; font-size: .8rem; color: var(--muted); pointer-events: none; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; border-radius: 14px;
   font-weight: 700; transition: transform .08s, background .15s, opacity .15s; }
@@ -73,7 +77,11 @@ a { color: var(--primary); }
 
 /* ---------- patient app ---------- */
 .app { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 14px 16px 110px; }
-.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0 18px; flex-wrap: wrap; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0 18px; flex-wrap: nowrap; }
+.topbar .brand { min-width: 0; }
+.topbar .brand > span:last-child { min-width: 0; }
+.topbar .brand small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lang-switch { flex-shrink: 0; }
 
 .hero h1 { font-size: 1.75rem; line-height: 1.25; margin: 4px 0 6px; letter-spacing: -.01em; }
 .hero p { color: var(--muted); margin: 0 0 18px; }
