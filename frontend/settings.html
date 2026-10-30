@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dawrek · Settings</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230e7c6b'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>D</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="settings">
+  <header class="staff-top">
+    <a class="brand" href="/settings"><span class="brand-mark">د</span><span>Dawrek <small data-i18n="settings"></small></span></a>
+    <span class="spacer"></span>
+    <a class="btn btn-soft" href="/staff">← <span data-i18n="staffTitle"></span></a>
+    <div class="lang-switch" id="lang"></div>
+  </header>
+
+  <div class="notice notice-amber" data-i18n="setTempNote"></div>
+
+  <section class="card set-card">
+    <h2 data-i18n="setClinic"></h2>
+    <div class="set-grid">
+      <label class="field"><span data-i18n="setClinicName"></span>
+        <input id="clinic-name" maxlength="60" data-i18n-placeholder="setClinicNameHint">
+        <small data-i18n="setClinicNameHelp"></small>
+      </label>
+      <label class="field"><span data-i18n="setDesks"></span>
+        <input id="desks" type="number" min="1" max="20" inputmode="numeric">
+        <small data-i18n="setDesksHelp"></small>
+      </label>
+    </div>
+  </section>
+
+  <section class="card set-card">
+    <h2 data-i18n="setServices"></h2>
+    <p class="set-help" data-i18n="setServicesHelp"></p>
+    <div class="set-services" id="services"></div>
+  </section>
+
+  <section class="card set-card">
+    <h2 data-i18n="setKnowledge"></h2>
+    <p class="set-help" data-i18n="setKnowledgeHelp"></p>
+    <div class="chips" id="topics"></div>
+    <div class="set-kb" id="kb"></div>
+  </section>
+
+  <div class="set-actions">
+    <button class="btn btn-primary" id="save" data-i18n="setSave"></button>
+    <span class="set-status" id="status" aria-live="polite"></span>
+    <span class="spacer"></span>
+    <button class="btn btn-soft" id="export">⬇️ <span data-i18n="setExport"></span></button>
+    <label class="btn btn-soft">⬆️ <span data-i18n="setImport"></span><input type="file" id="import" accept="application/json,.json" hidden></label>
+    <button class="btn btn-danger" id="defaults" data-i18n="setDefaults"></button>
+  </div>
+</main>
+<script src="/static/i18n.js"></script>
+<script src="/static/settings.js"></script>
+</body>
+</html>

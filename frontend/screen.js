@@ -55,6 +55,7 @@ async function showQr() {
   try {
     const info = await api("/api/info");
     if (["localhost", "127.0.0.1"].includes(location.hostname)) url = info.lan_url; // phones can't open "localhost"
+    if (info.clinic_name) $("brand-name").textContent = `Dawrek · ${info.clinic_name}`;
   } catch {}
   $("url").textContent = url;
   if (window.QRCode) new QRCode($("qr"), { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });

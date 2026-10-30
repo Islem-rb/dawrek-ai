@@ -272,3 +272,90 @@ a { color: var(--primary); }
   .screen { grid-template-columns: 1fr; padding: 16px; }
 }
 @media (max-width: 600px) { .ins-kpis { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- top actions: bigger text + language ---------- */
+.top-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.text-size { height: 38px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); font-size: .95rem; font-weight: 800; }
+.text-size[aria-pressed="true"] { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
+
+/* Bigger text for elderly / low-vision patients: zoom reflows the page like browser zoom, plus stronger contrast. */
+html.big body { zoom: 1.22; }
+html.big { --muted: var(--text); --border: color-mix(in srgb, var(--text) 35%, transparent); }
+html.big .topbar .brand > span:last-child { display: none; }  /* logo only: room for the bigger controls */
+.brand-mark { flex-shrink: 0; }
+
+.clinic-chip { display: inline-block; margin-bottom: 6px; padding: 3px 12px; border-radius: 999px; background: var(--primary-soft);
+  color: var(--primary); font-weight: 700; font-size: .85rem; }
+
+/* ---------- appointments ---------- */
+.appt-toggle { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; margin-bottom: 14px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
+.appt-toggle:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
+.appt-toggle input { width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--primary); flex-shrink: 0; }
+.appt-toggle b { display: block; }
+.appt-toggle small { display: block; color: var(--muted); font-size: .82rem; line-height: 1.4; }
+.appt-note { margin: 10px auto 0; padding: 6px 12px; border-radius: 10px; background: var(--amber-soft); color: var(--amber);
+  font-size: .85rem; font-weight: 700; width: fit-content; max-width: 100%; }
+.appt-note.confirmed { background: var(--primary-soft); color: var(--primary); }
+
+/* ---------- phone alerts ---------- */
+.alerts { margin-top: 14px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.alerts-icon { font-size: 1.5rem; line-height: 1.3; }
+.alerts p { margin: 2px 0 10px; color: var(--muted); font-size: .9rem; }
+.alerts.on { background: var(--green-soft); border-color: transparent; }
+.alerts.on p { color: var(--green); font-weight: 700; margin-bottom: 0; }
+
+/* ---------- staff: pace + appointments to check ---------- */
+.svc-pace { color: var(--muted); font-size: .82rem; font-weight: 600; margin-top: -4px; }
+.svc-pace .learned { color: var(--primary); font-weight: 700; }
+.appt-check { display: grid; gap: 6px; padding: 8px 10px; border-radius: 12px; background: var(--amber-soft); }
+.appt-check > small { color: var(--amber); font-weight: 800; }
+.appt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.appt-row > span:first-child { flex: 1; }
+.appt-row .who { color: var(--muted); font-size: .85rem; }
+.appt-row .btn { padding: 6px 10px; font-size: .8rem; border-radius: 10px; }
+
+/* ---------- settings ---------- */
+.settings { max-width: 980px; margin: 0 auto; padding: 18px 16px 110px; }
+.settings > .notice { margin: 0 0 14px; }
+.set-card { padding: 18px; margin-bottom: 14px; }
+.set-card h2 { margin: 0 0 4px; font-size: 1.15rem; }
+.set-help { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+.set-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-top: 10px; }
+.field { display: grid; gap: 5px; font-weight: 700; font-size: .9rem; }
+.field small { color: var(--muted); font-weight: 600; font-size: .8rem; }
+.field input, .field textarea, .set-minutes input { font: inherit; font-weight: 500; padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text); width: 100%; }
+.field textarea { resize: vertical; line-height: 1.55; font-size: .9rem; }
+.field input:focus, .field textarea:focus, .set-minutes input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.set-services { display: grid; gap: 8px; }
+.set-service { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); flex-wrap: wrap; }
+.set-service.closed .set-service-name, .set-service.closed .service-icon { opacity: .45; }
+.set-service .service-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+.set-service-name { flex: 1; min-width: 150px; }
+.set-service-name b, .set-service-name small { display: block; }
+.set-service-name small { color: var(--muted); font-size: .8rem; }
+.switch { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: .85rem; cursor: pointer; }
+.switch input { width: 20px; height: 20px; accent-color: var(--primary); margin: 0; }
+.set-minutes { display: grid; grid-template-columns: 76px auto; align-items: center; column-gap: 8px; font-size: .85rem; font-weight: 600; color: var(--muted); }
+.set-minutes input { padding: 7px 10px; text-align: center; }
+.set-minutes .learned { grid-column: 2; color: var(--primary); font-weight: 700; }
+#topics { margin: 0 0 12px; padding: 0; }
+.chip.active { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
+.set-kb { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.set-actions { position: fixed; inset: auto 0 0 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 12px max(16px, calc((100vw - 980px) / 2)); background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px); border-top: 1px solid var(--border); }
+.set-actions .spacer { flex: 1; }
+.set-status { font-weight: 700; font-size: .9rem; }
+.set-status.ok { color: var(--green); }
+.set-status.warn { color: var(--amber); }
+.set-status.err { color: var(--red); }
+@media (max-width: 760px) {
+  .set-grid, .set-kb { grid-template-columns: 1fr; }
+  .set-actions .spacer { display: none; }
+  .set-actions .btn { padding: 9px 12px; font-size: .85rem; }
+  .settings { padding-bottom: 170px; }
+}
+.appt-row .ticket-no { white-space: nowrap; }
+.appt-row > span:first-child { min-width: 120px; }

@@ -24,6 +24,14 @@ const I18N = {
       lab: ["تحاليل", "أخذ عينات"], imaging: ["أشعة وإيكو", "تصوير طبي"], admin: ["خدمات إدارية", "شهادات ووراق"],
     },
     pinPrompt: "دخّل الكود السري متاع الطاقم", micStart: "احكي", micStop: "وقّف وابعث", listening: "نسمع فيك… انزل باش توقف", transcribing: "نكتب في كلامك…", micDenied: "المايكرو مسكّر. حلّو من إعدادات المتصفح.", voiceError: "ما فهمتش الصوت، عاود جرّب.", speak: "اقرا الجواب", tooMany: "برشا أسئلة، استنى شوية.",
+    bigText: "كتيبة كبيرة", haveAppointment: "عندي موعد", apptHint: "الطاقم يثبّتو في الشباك. اللي عندهم موعد يتعدّاو قبل.",
+    apptPending: "📅 موعدك يستنى تثبيت من الطاقم", apptConfirmed: "📅 موعدك تثبّت: تتعدّى قبل",
+    alertsTitle: "خلّي تليفونك ينبّهك", alertsText: "نرنّولك كي يقرب دورك، حتى كان التليفون مسكّر.",
+    alertsBtn: "شغّل التنبيهات", alertsOn: "التنبيهات شغّالة ✓ تنجم تسكّر التليفون.",
+    alertsDenied: "التنبيهات مسكّرة. حلّها من إعدادات المتصفح لهالموقع.",
+    alertsIos: "في الآيفون: اضغط مشاركة ← إضافة للشاشة الرئيسية، وحلّ دورك من غادي باش تخدم التنبيهات.",
+    alertsError: "ما نجمناش نشغّلو التنبيهات. خلّي الصفحة محلولة.",
+    apptCheck: "مواعيد للتثبيت", confirm: "ثبّت", reject: "ما عندوش", perPatient: "دق/مريض", learned: "محسوبة اليوم", settings: "الإعدادات",
     // staff
     staffTitle: "لوحة الشبابيك", desk: "الشباك", callNext: "عيّط اللي بعدو", done: "كمل", absent: "غايب", recall: "عاود عيّط",
     nobodyWaiting: "ما فما حتى حد", waitingList: "يستناو", served: "تخدموا", avgWait: "معدل الانتظار",
@@ -56,6 +64,14 @@ const I18N = {
       lab: ["التحاليل", "أخذ العينات"], imaging: ["الأشعة والتصوير", "أشعة وإيكو"], admin: ["الخدمات الإدارية", "شهادات ووثائق"],
     },
     pinPrompt: "أدخل الرمز السري للطاقم", micStart: "تحدّث", micStop: "إيقاف وإرسال", listening: "أستمع إليك… اضغط للإيقاف", transcribing: "أكتب كلامك…", micDenied: "الميكروفون محظور. فعّله من إعدادات المتصفح.", voiceError: "لم أفهم التسجيل، حاول مجدداً.", speak: "اقرأ الإجابة", tooMany: "طلبات كثيرة، انتظر قليلاً.",
+    bigText: "خط كبير", haveAppointment: "لديّ موعد", apptHint: "يتحقق الموظفون منه عند الشباك. أصحاب المواعيد لهم الأولوية.",
+    apptPending: "📅 موعدك في انتظار تأكيد الموظفين", apptConfirmed: "📅 تم تأكيد موعدك: لك الأولوية",
+    alertsTitle: "تنبيه على هاتفك", alertsText: "سننبّهك عندما يقترب دورك، حتى لو كان الهاتف مقفلاً.",
+    alertsBtn: "تفعيل التنبيهات", alertsOn: "التنبيهات مفعّلة ✓ يمكنك قفل الهاتف.",
+    alertsDenied: "التنبيهات محظورة. اسمح بها لهذا الموقع من إعدادات المتصفح.",
+    alertsIos: "على الآيفون: اضغط مشاركة ← إضافة إلى الشاشة الرئيسية، ثم افتح دورك من هناك لتفعيل التنبيهات.",
+    alertsError: "تعذّر تفعيل التنبيهات. أبقِ هذه الصفحة مفتوحة.",
+    apptCheck: "مواعيد للتحقق", confirm: "تأكيد", reject: "لا موعد", perPatient: "د/مريض", learned: "محسوبة اليوم", settings: "الإعدادات",
     staffTitle: "لوحة الشبابيك", desk: "الشباك", callNext: "استدعاء التالي", done: "تم", absent: "غائب", recall: "إعادة النداء",
     nobodyWaiting: "لا أحد في الانتظار", waitingList: "في الانتظار", served: "تمت خدمتهم", avgWait: "متوسط الانتظار",
     noShows: "الغيابات", addDemo: "إضافة مرضى (عرض)", reset: "إعادة ضبط", confirmReset: "مسح الطابور بالكامل؟",
@@ -86,6 +102,14 @@ const I18N = {
       lab: ["Analyses", "Prélèvements"], imaging: ["Radiologie", "Radio & échographie"], admin: ["Administratif", "Certificats, dossiers"],
     },
     pinPrompt: "Code PIN du personnel", micStart: "Parler", micStop: "Arrêter et envoyer", listening: "Je vous écoute… touchez pour arrêter", transcribing: "Transcription…", micDenied: "Micro bloqué. Autorisez-le dans les réglages du navigateur.", voiceError: "Je n'ai pas compris l'audio, réessayez.", speak: "Lire la réponse", tooMany: "Trop de questions, patientez un instant.",
+    bigText: "Grand texte", haveAppointment: "J'ai un rendez-vous", apptHint: "Le personnel le vérifie au guichet. Les rendez-vous passent en priorité.",
+    apptPending: "📅 Rendez-vous en attente de vérification", apptConfirmed: "📅 Rendez-vous confirmé : vous passez en priorité",
+    alertsTitle: "Être prévenu sur mon téléphone", alertsText: "Votre téléphone sonne quand votre tour approche, même verrouillé.",
+    alertsBtn: "Activer les alertes", alertsOn: "Alertes activées ✓ Vous pouvez verrouiller votre téléphone.",
+    alertsDenied: "Les alertes sont bloquées. Autorisez les notifications pour ce site dans le navigateur.",
+    alertsIos: "Sur iPhone : touchez Partager → Sur l'écran d'accueil, puis ouvrez Dawrek depuis là pour les alertes.",
+    alertsError: "Impossible d'activer les alertes. Gardez cette page ouverte.",
+    apptCheck: "Rendez-vous à vérifier", confirm: "Confirmer", reject: "Pas de RDV", perPatient: "min/patient", learned: "appris aujourd'hui", settings: "Réglages",
     staffTitle: "Console guichets", desk: "Guichet", callNext: "Appeler le suivant", done: "Terminé", absent: "Absent", recall: "Rappeler",
     nobodyWaiting: "Personne en attente", waitingList: "En attente", served: "Servis", avgWait: "Attente moyenne",
     noShows: "Absences", addDemo: "Ajouter des patients (démo)", reset: "Réinitialiser", confirmReset: "Vider toute la file ?",
@@ -116,6 +140,14 @@ const I18N = {
       lab: ["Lab tests", "Sample collection"], imaging: ["Imaging", "X-ray & ultrasound"], admin: ["Administrative", "Certificates, records"],
     },
     pinPrompt: "Staff PIN", micStart: "Speak", micStop: "Stop and send", listening: "Listening… tap to stop", transcribing: "Transcribing…", micDenied: "Microphone blocked. Allow it in your browser settings.", voiceError: "I couldn't understand the audio, please retry.", speak: "Read the answer aloud", tooMany: "Too many questions, please wait a moment.",
+    bigText: "Bigger text", haveAppointment: "I have an appointment", apptHint: "Staff check it at the desk. Appointments are served first.",
+    apptPending: "📅 Appointment waiting for staff to check", apptConfirmed: "📅 Appointment confirmed: you're served first",
+    alertsTitle: "Get alerted on your phone", alertsText: "Your phone rings when your turn is near, even when it's locked.",
+    alertsBtn: "Turn on alerts", alertsOn: "Alerts on ✓ You can lock your phone.",
+    alertsDenied: "Alerts are blocked. Allow notifications for this site in your browser settings.",
+    alertsIos: "On iPhone: tap Share → Add to Home Screen, then open Dawrek from there to get alerts.",
+    alertsError: "Couldn't turn on alerts. Keep this page open instead.",
+    apptCheck: "Appointments to check", confirm: "Confirm", reject: "No appointment", perPatient: "min/patient", learned: "learned today", settings: "Settings",
     staffTitle: "Desk console", desk: "Desk", callNext: "Call next", done: "Done", absent: "No-show", recall: "Recall",
     nobodyWaiting: "Nobody waiting", waitingList: "Waiting", served: "Served", avgWait: "Avg. wait",
     noShows: "No-shows", addDemo: "Add patients (demo)", reset: "Reset", confirmReset: "Clear the whole queue?",
@@ -147,6 +179,7 @@ const Lang = {
     document.documentElement.dir = I18N[this.current].dir;
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = this.t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = this.t(el.dataset.i18nPlaceholder); });
+    document.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = el.ariaLabel = this.t(el.dataset.i18nTitle); });
     document.querySelectorAll(".lang-switch select").forEach((s) => { s.value = this.current; });
   },
   renderSwitch(container) {
@@ -175,7 +208,10 @@ const api = async (path, options = {}, retried = false) => {
       return api(path, options, true);
     }
   }
-  if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+  if (!res.ok) {
+    const detail = await res.json().then((j) => j.detail).catch(() => "");
+    throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status, detail: typeof detail === "string" ? detail : "" });
+  }
   return res.json();
 };
 

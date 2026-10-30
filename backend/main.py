@@ -4,6 +4,7 @@
     /staff    staff console (call next, done, no-show)
     /screen   waiting-room display (now serving, QR code to join)
     /insights manager dashboard (peaks, waits, what patients ask)
+    /settings clinic settings (services, desks, assistant knowledge)
 """
 from __future__ import annotations
 
@@ -19,7 +20,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # before importing modules that read env vars
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request  # noqa: E402
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Request  # noqa: E402
 from fastapi.concurrency import run_in_threadpool  # noqa: E402
 from fastapi.responses import FileResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
@@ -27,7 +28,9 @@ from pydantic import BaseModel, Field  # noqa: E402
 
 from backend.assistant import Assistant  # noqa: E402
 from backend.insights import Insights  # noqa: E402
+from backend.push import PushNotifier  # noqa: E402
 from backend.queue_engine import SERVICES, QueueEngine  # noqa: E402
+from backend.settings import ClinicSettings  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(name)s  %(message)s")
 
@@ -40,11 +43,24 @@ app = FastAPI(title="Dawrek", description="Smart multilingual patient queue", ve
 queue = QueueEngine()
 assistant = Assistant()
 insights = Insights()
+clinic = ClinicSettings()
+clinic.load()
+push = PushNotifier()
 
 
 class TicketRequest(BaseModel):
     service: str
     name: str = Field("", max_length=40)
+    appointment: bool = False
+
+
+class PushRequest(BaseModel):
+    subscription: dict
+    lang: str = "tn"
+
+
+class AppointmentRequest(BaseModel):
+    confirmed: bool = True
 
 
 class CallRequest(BaseModel):
@@ -115,7 +131,8 @@ def _lan_url() -> str:
 def info():
     return {"ai_enabled": assistant.ai_enabled, "voice_enabled": assistant.ai_enabled,
             "staff_pin_required": bool(STAFF_PIN), "lan_url": _lan_url(),
-            "services": [{"key": k, **v} for k, v in SERVICES.items()]}
+            "push_key": push.public_key, **clinic.public(),
+            "services": [{"key": k, "enabled": True, **v} for k, v in SERVICES.items()]}
 
 
 @app.get("/api/queue")
@@ -127,9 +144,10 @@ def queue_state():
 @app.post("/api/tickets")
 def take_ticket(req: TicketRequest, request: Request):
     ticket_limit.check(request)
-    if req.service not in SERVICES:
-        raise HTTPException(400, "Unknown service")
-    ticket = queue.take_ticket(req.service, req.name)
+    try:
+        ticket = queue.take_ticket(req.service, req.name, req.appointment)
+    except KeyError:
+        raise HTTPException(400, "Unknown or closed service")
     return queue.ticket_view(ticket.id)
 
 
@@ -139,10 +157,31 @@ def get_ticket(ticket_id: str):
 
 
 @app.delete("/api/tickets/{ticket_id}")
-def cancel_ticket(ticket_id: str):
-    _ticket_or_404(ticket_id)
+def cancel_ticket(ticket_id: str, background: BackgroundTasks):
+    ticket = _ticket_or_404(ticket_id)
     queue.cancel(ticket_id)
+    push.unsubscribe(ticket_id)
+    background.add_task(push.notify_queue, queue, ticket["service"])  # everyone behind moved up
     return queue.ticket_view(ticket_id)
+
+
+@app.post("/api/tickets/{ticket_id}/push")
+def subscribe_push(ticket_id: str, req: PushRequest, background: BackgroundTasks):
+    """The phone agreed to alerts: remember where to send them for this ticket."""
+    ticket = _ticket_or_404(ticket_id)
+    if not push.enabled:
+        raise HTTPException(503, "Phone alerts are off on this server")
+    if not str(req.subscription.get("endpoint", "")).startswith("https://"):
+        raise HTTPException(400, "Invalid subscription")
+    push.subscribe(ticket_id, req.subscription, req.lang)
+    background.add_task(push.notify_queue, queue, ticket["service"])  # maybe it's already almost their turn
+    return {"ok": True}
+
+
+@app.delete("/api/tickets/{ticket_id}/push")
+def unsubscribe_push(ticket_id: str):
+    push.unsubscribe(ticket_id)
+    return {"ok": True}
 
 
 @app.post("/api/chat")
@@ -179,17 +218,21 @@ async def transcribe(request: Request):
 # ---- staff -----------------------------------------------------------------
 
 @app.post("/api/staff/call", dependencies=staff_only)
-def call_next(req: CallRequest):
+def call_next(req: CallRequest, background: BackgroundTasks):
     if req.service not in SERVICES:
         raise HTTPException(400, "Unknown service")
     ticket = queue.call_next(req.service, req.desk)
+    background.add_task(push.notify_queue, queue, req.service)  # sent after the response: staff never wait
     return {"called": queue.ticket_view(ticket.id) if ticket else None}
 
 
-def _staff_action(action, ticket_id: str) -> dict:
+def _staff_action(action, ticket_id: str, background: BackgroundTasks | None = None) -> dict:
     _ticket_or_404(ticket_id)
     action(ticket_id)
-    return queue.ticket_view(ticket_id)
+    ticket = queue.ticket_view(ticket_id)
+    if background:
+        background.add_task(push.notify_queue, queue, ticket["service"])
+    return ticket
 
 
 @app.post("/api/staff/tickets/{ticket_id}/done", dependencies=staff_only)
@@ -198,13 +241,22 @@ def mark_done(ticket_id: str):
 
 
 @app.post("/api/staff/tickets/{ticket_id}/no-show", dependencies=staff_only)
-def mark_no_show(ticket_id: str):
-    return _staff_action(queue.mark_no_show, ticket_id)
+def mark_no_show(ticket_id: str, background: BackgroundTasks):
+    return _staff_action(queue.mark_no_show, ticket_id, background)
 
 
 @app.post("/api/staff/tickets/{ticket_id}/recall", dependencies=staff_only)
-def recall(ticket_id: str):
-    return _staff_action(queue.recall, ticket_id)
+def recall(ticket_id: str, background: BackgroundTasks):
+    ticket = _staff_action(queue.recall, ticket_id)
+    if ticket["status"] == "called":  # ring the phone again too
+        background.add_task(push.send, ticket_id, "called", "recall", True, number=ticket["number"], desk=ticket["desk"])
+    return ticket
+
+
+@app.post("/api/staff/tickets/{ticket_id}/appointment", dependencies=staff_only)
+def confirm_appointment(ticket_id: str, req: AppointmentRequest, background: BackgroundTasks):
+    """Staff checked the patient's appointment: confirmed tickets get priority in the line."""
+    return _staff_action(lambda tid: queue.confirm_appointment(tid, req.confirmed), ticket_id, background)
 
 
 @app.post("/api/staff/demo", dependencies=staff_only)
@@ -236,6 +288,25 @@ def reset():
     queue.reset()
     return {"ok": True}
 
+# ---- settings --------------------------------------------------------------
+
+@app.get("/api/settings", dependencies=staff_only)
+def get_settings():
+    return clinic.full()
+
+
+@app.put("/api/settings", dependencies=staff_only)
+def update_settings(data: dict):
+    try:
+        return clinic.update(data)
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(400, str(exc))
+
+
+@app.post("/api/settings/reset", dependencies=staff_only)
+def reset_settings():
+    return clinic.reset()
+
 # ---- pages -----------------------------------------------------------------
 
 @app.get("/", include_in_schema=False)
@@ -256,6 +327,22 @@ def screen_page():
 @app.get("/insights", include_in_schema=False)
 def insights_page():
     return FileResponse(FRONTEND / "insights.html")
+
+
+@app.get("/settings", include_in_schema=False)
+def settings_page():
+    return FileResponse(FRONTEND / "settings.html")
+
+
+@app.get("/sw.js", include_in_schema=False)
+def service_worker():
+    # Served from the root so it can control every page (phone alerts + home-screen app).
+    return FileResponse(FRONTEND / "sw.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/manifest.webmanifest", include_in_schema=False)
+def manifest():
+    return FileResponse(FRONTEND / "manifest.webmanifest", media_type="application/manifest+json")
 
 
 app.mount("/static", StaticFiles(directory=FRONTEND), name="static")

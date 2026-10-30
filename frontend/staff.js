@@ -3,8 +3,13 @@ let snapshot = null;
 let desk = 1;
 try { desk = Number(localStorage.getItem("dawrek.desk")) || 1; } catch {}
 
-$("desk").innerHTML = [1, 2, 3, 4, 5, 6].map((n) => `<option value="${n}">${n}</option>`).join("");
-$("desk").value = desk;
+function renderDesks(count) {
+  $("desk").innerHTML = Array.from({ length: count }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("");
+  if (desk > count) desk = 1;
+  $("desk").value = desk;
+}
+renderDesks(6);
+api("/api/info").then((info) => renderDesks(info.desks)).catch(() => {});
 $("desk").addEventListener("change", (e) => {
   desk = Number(e.target.value);
   try { localStorage.setItem("dawrek.desk", desk); } catch {}
@@ -19,7 +24,7 @@ function render() {
   $("k-avg").textContent = `${s.avg_wait_minutes} ${Lang.t("minutes")}`;
   $("k-noshow").textContent = s.no_shows;
 
-  $("board").innerHTML = snapshot.services.map((svc) => {
+  $("board").innerHTML = snapshot.services.filter((svc) => svc.enabled || svc.waiting_count || svc.serving.length).map((svc) => {
     const [name, desc] = Lang.t("services")[svc.key];
     const serving = svc.serving.map((t) => `
       <div class="serving-row">
@@ -29,8 +34,14 @@ function render() {
         <button class="btn btn-soft" data-act="no-show" data-id="${t.id}">${Lang.t("absent")}</button>
         <button class="btn btn-primary" data-act="done" data-id="${t.id}">✓ ${Lang.t("done")}</button>
       </div>`).join("");
+    const toCheck = svc.waiting.filter((t) => t.appointment === "pending").map((t) => `
+      <div class="appt-row">
+        <span>📅 <b class="ticket-no">${t.number}</b> <span class="who">${esc(t.name)}</span></span>
+        <button class="btn btn-soft" data-act="appt-no" data-id="${t.id}">${Lang.t("reject")}</button>
+        <button class="btn btn-primary" data-act="appt-yes" data-id="${t.id}">✓ ${Lang.t("confirm")}</button>
+      </div>`).join("");
     const waiting = svc.waiting.slice(0, 12).map((t, i) =>
-      `<span class="qchip ${i === 0 ? "mine" : ""}" title="${esc(t.name)}">${t.number}${t.no_shows ? ' <span class="ns">↺</span>' : ""}</span>`).join("")
+      `<span class="qchip ${i === 0 ? "mine" : ""}" title="${esc(t.name)}">${t.appointment === "confirmed" ? "📅 " : ""}${t.number}${t.no_shows ? ' <span class="ns">↺</span>' : ""}</span>`).join("")
       + (svc.waiting.length > 12 ? `<span class="qchip">+${svc.waiting.length - 12}</span>` : "");
     return `<article class="card svc">
       <div class="svc-head">
@@ -38,7 +49,9 @@ function render() {
         <div><b>${esc(name)}</b><small>${svc.prefix} · ${esc(desc)}</small></div>
         <div class="count"><b>${svc.waiting_count}</b><br><small>~${svc.eta_minutes} ${Lang.t("minutes")}</small></div>
       </div>
+      <div class="svc-pace">⏱️ ${svc.minutes_per_patient} ${Lang.t("perPatient")}${svc.learned ? ` · <span class="learned">${Lang.t("learned")}</span>` : ""}</div>
       ${serving}
+      ${toCheck ? `<div class="appt-check"><small>${Lang.t("apptCheck")}</small>${toCheck}</div>` : ""}
       <div class="queue-chips">${waiting || `<span class="empty">${Lang.t("nobodyWaiting")}</span>`}</div>
       <button class="btn btn-primary btn-block" data-act="call" data-service="${svc.key}" ${svc.waiting_count ? "" : "disabled"}>
         📣 ${Lang.t("callNext")}</button>
@@ -56,7 +69,9 @@ $("board").addEventListener("click", async (e) => {
   b.disabled = true;
   try {
     if (b.dataset.act === "call") await api("/api/staff/call", { method: "POST", body: { service: b.dataset.service, desk } });
-    else await api(`/api/staff/tickets/${b.dataset.id}/${b.dataset.act}`, { method: "POST" });
+    else if (b.dataset.act.startsWith("appt-")) {
+      await api(`/api/staff/tickets/${b.dataset.id}/appointment`, { method: "POST", body: { confirmed: b.dataset.act === "appt-yes" } });
+    } else await api(`/api/staff/tickets/${b.dataset.id}/${b.dataset.act}`, { method: "POST" });
   } finally { refresh(); }
 });
 

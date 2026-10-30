@@ -31,11 +31,16 @@ or whether they're even in the right line. Reception staff answer the same quest
 |---|---|
 | 📱 **Take a ticket from your phone** | Scan the QR code on the waiting-room screen. No app to install, no account. |
 | ⏱️ **Follow your turn live** | People ahead, estimated wait, who's being served. Grab a coffee and come back. |
-| 🔔 **Get called** | Your phone turns green, rings and vibrates: *"Your turn, desk 2"*. |
+| 🔔 **Get called, even with the phone locked** | Your phone turns green, rings and vibrates: *"Your turn, desk 2"*. Turn on alerts and it also rings when the phone is locked or the browser is closed, plus an *"almost your turn"* heads-up. |
+| 📲 **Works like an app** | Add Dawrek to the home screen: icon, full screen, no app store. |
+| 🔠 **Bigger text** | One tap on **Aa** for large text and stronger contrast, for elderly and low-vision patients. |
+| 📅 **Appointments first** | Patients tick *"I have an appointment"*, staff confirm it at the desk, and confirmed appointments are served first (with one walk-in after every two, so nobody is stuck). |
 | 💬 **Ask in your own words** | *"قداش باقي قدامي؟"*, *"9adech ba9i?"*, *"Quels papiers apporter ?"*. The assistant knows **your** live ticket. |
 | 🎙️ **Just speak** | Tap the mic and ask out loud, in Darija or French. Dawrek transcribes it (Whisper) and can read the answer back. Made for elderly and low-literacy patients. |
 | 🛡️ **Safe by design** | Urgent symptoms (chest pain, bleeding, can't breathe…) skip the AI and send the patient straight to emergency / SAMU 190. |
-| 🧑‍⚕️ **One-click staff console** | Call next, mark done or absent. Absent patients move to the back of the line automatically. |
+| 🧑‍⚕️ **One-click staff console** | Call next, mark done or absent, confirm appointments. Absent patients move to the back of the line automatically. |
+| ⏱️ **Wait times that learn** | The estimate starts from each service's average, then switches to the real pace of the day (median of the last visits) and divides by the number of desks open. |
+| ⚙️ **Clinic settings** | Clinic name, number of desks, open/closed services, minutes per patient and everything the assistant knows, edited from a page. |
 | 📺 **Waiting-room screen** | Bilingual now-serving board with voice announcements and a join QR code. |
 | 📊 **Manager insights** | Peak hours, waits per service, no-shows, which languages patients write in and what they ask, plus concrete advice like *"open one more consultation desk at 9h"*. |
 
@@ -66,6 +71,7 @@ Then open:
 | Staff console | http://localhost:8000/staff |
 | Waiting-room screen | http://localhost:8000/screen |
 | Manager insights | http://localhost:8000/insights |
+| Clinic settings | http://localhost:8000/settings |
 
 To turn on the AI, put a free key from [console.groq.com](https://console.groq.com/keys) in `.env`:
 
@@ -109,6 +115,11 @@ Push the repo to GitHub, then in [Render](https://dashboard.render.com): **New �
 - **Free quota protection:** each visitor is limited to 15 chat messages, 8 voice questions and 10 tickets per minute.
 - **State is in memory:** a restart or a sleeping instance starts with an empty queue. Press
   *Add patients (demo)* and *Simulate a day* before you present.
+- **Settings on free hosting:** they're saved to `data/clinic_settings.json`, but Render's free disk is wiped on
+  restart. Use **Download backup** on `/settings` after changes and **Restore backup** to bring them back.
+- **Phone alerts** work on Android (Chrome, Firefox, Samsung Internet) and on iPhone once Dawrek is added to the
+  home screen (iOS 16.4+). They need HTTPS, so test them on the public URL. Keys are created at startup; set
+  `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` only if you want them stable across restarts.
 
 ---
 
@@ -162,7 +173,8 @@ Click **🧪 Add patients (demo)** once so the queue looks busy.
 - **AI:** Groq (`openai/gpt-oss-120b`, configurable via `GROQ_MODEL`). The knowledge base is small,
   so it goes straight into the prompt in the patient's language. No vector database needed.
 - **Frontend:** plain HTML/CSS/JS, no build step. Mobile-first, RTL-aware, light and dark mode.
-- **Live updates:** the pages poll the API every 1.5–2 s.
+- **Live updates:** the pages poll the API every 1.5–2 s. Phone alerts use standard Web Push
+  (`backend/push.py`, `frontend/sw.js`), free and with no third-party account.
 - **Insights** (`backend/insights.py`): computed from real tickets and chat questions. *Simulate a day* adds
   one realistic past day (a small queue simulation using the 8–10h / 14–16h peaks from the knowledge base),
   always labeled as simulated on the dashboard.
@@ -180,11 +192,14 @@ durations live in `SERVICES` in `backend/queue_engine.py`.
 | `POST` | `/api/tickets` | take a ticket `{service, name?}` |
 | `GET` | `/api/tickets/{id}` | live status, position, ETA |
 | `DELETE` | `/api/tickets/{id}` | leave the queue |
+| `POST` · `DELETE` | `/api/tickets/{id}/push` | turn phone alerts on / off `{subscription, lang}` |
 | `POST` | `/api/transcribe` | raw audio body (webm / ogg / mp4) → `{text}` |
 | `POST` | `/api/chat` | `{message, ticket_id?, history?}` → `{reply, lang, mode}` |
 | `GET` | `/api/queue` | full board for staff & screen |
 | `POST` | `/api/staff/call` | `{service, desk}` call next |
 | `POST` | `/api/staff/tickets/{id}/done` · `/no-show` · `/recall` | desk actions |
+| `POST` | `/api/staff/tickets/{id}/appointment` | `{confirmed}` confirm or reject an appointment |
+| `GET` · `PUT` | `/api/settings` | clinic settings and assistant knowledge (staff) |
 | `GET` | `/api/insights` | KPIs, arrivals by hour, waits, languages, topics, recommendations |
 | `POST` · `DELETE` | `/api/insights/simulate` | add / remove a simulated past clinic day |
 
@@ -202,7 +217,6 @@ pytest
 ## Roadmap
 
 - **SMS / WhatsApp alerts** for patients without a smartphone, or who leave the building.
-- **Appointment booking** with priority in the line (appointment holders wait ~60% less).
+- **Appointment booking** from the app, with time slots.
 - **Staff login and multi-clinic** support with a real database.
 - **Insights over weeks and months**, with exports and comparison between clinics.
-- **Smarter ETA** learned from real service durations instead of fixed averages.

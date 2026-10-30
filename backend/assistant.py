@@ -73,6 +73,7 @@ def load_knowledge_base(kb_dir: Path = KB_DIR) -> dict[str, dict[str, str]]:
 
 
 KB = load_knowledge_base()
+CLINIC = {"name": ""}  # set from the settings page
 
 # ---------------------------------------------------------------- language detection
 
@@ -256,7 +257,7 @@ def offline_answer(message: str, lang: str, ticket: dict | None) -> str:
 # ---------------------------------------------------------------- LLM
 
 SYSTEM_PROMPT = """You are Dawrek (دورك), the friendly assistant of a clinic's smart queue in Tunisia.
-You help patients waiting in line: their place in the queue, wait times, required documents,
+{clinic}You help patients waiting in line: their place in the queue, wait times, required documents,
 appointments and available services.
 
 LANGUAGE: Reply ONLY in {lang_name}. Match the patient's language and script exactly, even if the
@@ -324,7 +325,9 @@ class Assistant:
         topics = TOPICS_FOR_INTENT.get(detect_intent(message), list(KB))  # unclear question: send everything
         kb_text = "\n\n".join(f"[{topic}]\n{KB[topic].get(section, '')}" for topic in topics)
         live = describe_ticket(ticket, "en") or "The patient has no ticket yet. They can take one in the app."
-        system = SYSTEM_PROMPT.format(lang_name=LANG_NAMES[lang], emergency=EMERGENCY_NUMBER, live=live, kb=kb_text)
+        clinic = f"The clinic is called {CLINIC['name']}.\n" if CLINIC["name"] else ""
+        system = SYSTEM_PROMPT.format(lang_name=LANG_NAMES[lang], emergency=EMERGENCY_NUMBER, live=live, kb=kb_text,
+                                      clinic=clinic)
 
         messages = [{"role": "system", "content": system}]
         for turn in history[-6:]:

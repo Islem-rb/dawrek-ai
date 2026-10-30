@@ -25,11 +25,12 @@ function render() {
   $("ticket-view").classList.toggle("hidden", !t);
   if (!t) renderServices(); else renderTicket(t);
   renderAiPill();
+  renderAlerts();
 }
 
 function renderServices() {
   if (!state.queue) return;
-  $("services").innerHTML = state.queue.services.map((s) => {
+  $("services").innerHTML = state.queue.services.filter((s) => s.enabled).map((s) => {
     const [name, desc] = Lang.t("services")[s.key];
     const meta = s.waiting_count
       ? `<b>${s.waiting_count}</b>${Lang.t("waitingShort")} · ~${s.eta_minutes} ${Lang.t("minutes")}`
@@ -58,6 +59,10 @@ function renderTicket(t) {
   }[t.status];
   pill.className = `pill ${cls}`;
   pill.innerHTML = `${t.status === "waiting" ? '<span class="dot live"></span>' : ""}${esc(Lang.t(key))}`;
+  const appt = t.status === "waiting" && t.appointment;
+  $("t-appt").classList.toggle("hidden", !appt);
+  $("t-appt").classList.toggle("confirmed", t.appointment === "confirmed");
+  if (appt) $("t-appt").textContent = Lang.t(t.appointment === "confirmed" ? "apptConfirmed" : "apptPending");
 
   $("t-live").classList.toggle("hidden", closed);
   $("t-end").classList.toggle("hidden", !closed);
@@ -83,6 +88,12 @@ function renderTicket(t) {
   $("c-number").textContent = t.number;
   $("c-desk").textContent = t.desk ?? "";
   document.title = t.status === "called" ? `🔔 ${t.number} · Dawrek` : `${t.number} · Dawrek`;
+}
+
+function renderClinic() {
+  const name = state.info?.clinic_name;
+  $("clinic").classList.toggle("hidden", !name);
+  $("clinic").textContent = name ? `🏥 ${name}` : "";
 }
 
 function renderAiPill() {
@@ -126,9 +137,14 @@ $("services").addEventListener("click", async (e) => {
   unlockAudio();
   state.busy = true; renderServices();
   try {
-    const t = await api("/api/tickets", { method: "POST", body: { service: btn.dataset.service, name: $("name").value } });
+    const t = await api("/api/tickets", {
+      method: "POST", body: { service: btn.dataset.service, name: $("name").value, appointment: $("appt").checked },
+    });
     state.ticketId = t.id; state.ticket = t; state.maxAhead = t.people_ahead;
     store.set("dawrek.ticket", t.id); store.set("dawrek.maxAhead", t.people_ahead);
+    $("appt").checked = false;
+    if (pushReady() && Notification.permission === "granted") enableAlerts(); // already allowed once: no need to ask
+
   } finally { state.busy = false; render(); }
 });
 
@@ -146,6 +162,75 @@ $("c-ok").addEventListener("click", () => {
   store.set("dawrek.dismissed", state.dismissedCall);
   render();
 });
+
+// ------------------------------------------------------------- phone alerts
+
+// Web Push: the server rings the phone ("almost your turn", "your turn, desk 2") even when it's locked.
+// Android: any modern browser. iPhone: only once Dawrek is added to the home screen (iOS 16.4+).
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const pushReady = () => window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window
+  && "Notification" in window && !!state.info?.push_key;
+const alertsOn = () => !!state.ticketId && store.get("dawrek.alerts") === state.ticketId;
+
+function renderAlerts() {
+  const t = state.ticket;
+  const card = $("alerts"), btn = $("alerts-btn"), text = $("alerts-text");
+  let msg = null, showBtn = false;
+  if (t && t.status === "waiting") {
+    if (alertsOn()) msg = "alertsOn";
+    else if (pushReady() && Notification.permission === "denied") msg = "alertsDenied";
+    else if (pushReady()) { msg = "alertsText"; showBtn = true; }
+    else if (isIOS && !isStandalone()) msg = "alertsIos";
+  }
+  card.classList.toggle("hidden", !msg);
+  card.classList.toggle("on", msg === "alertsOn");
+  btn.classList.toggle("hidden", !showBtn);
+  if (msg) text.textContent = Lang.t(msg);
+}
+
+const keyBytes = (b64) => {
+  const raw = atob((b64 + "=".repeat((4 - (b64.length % 4)) % 4)).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+};
+
+async function enableAlerts() {
+  const ticketId = state.ticketId;
+  try {
+    if (Notification.permission !== "granted" && (await Notification.requestPermission()) !== "granted") return;
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    const key = keyBytes(state.info.push_key);
+    const sameKey = sub?.options?.applicationServerKey
+      && new Uint8Array(sub.options.applicationServerKey).every((b, i) => b === key[i]);
+    if (sub && !sameKey) { await sub.unsubscribe(); sub = null; } // the server restarted with new keys
+    sub = sub || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    await api(`/api/tickets/${ticketId}/push`, { method: "POST", body: { subscription: sub.toJSON(), lang: Lang.current } });
+    store.set("dawrek.alerts", ticketId);
+  } catch {
+    $("alerts-text").textContent = Lang.t("alertsError");
+    return;
+  } finally {
+    $("alerts-btn").disabled = false;
+  }
+  renderAlerts();
+}
+
+$("alerts-btn").addEventListener("click", () => { $("alerts-btn").disabled = true; unlockAudio(); enableAlerts(); });
+navigator.serviceWorker?.register("/sw.js").catch(() => {});
+
+// ------------------------------------------------------------- bigger text
+
+function applyBigText(on) {
+  document.documentElement.classList.toggle("big", on);
+  $("big").setAttribute("aria-pressed", on);
+}
+$("big").addEventListener("click", () => {
+  const on = !document.documentElement.classList.contains("big");
+  store.set("dawrek.big", on);
+  applyBigText(on);
+});
+applyBigText(!!store.get("dawrek.big"));
 
 // ------------------------------------------------------------- chat
 
@@ -291,10 +376,13 @@ $("chips").addEventListener("click", (e) => { const c = e.target.closest(".chip"
 
 // ------------------------------------------------------------- boot
 
-Lang.init(() => { render(); resetChat(); updateMic(); });
+Lang.init(() => {
+  render(); resetChat(); updateMic();
+  if (alertsOn()) enableAlerts(); // alerts follow the new language
+});
 Lang.renderSwitch($("lang"));
 resetChat();
-api("/api/info").then((info) => { state.info = info; renderAiPill(); updateMic(); }).catch(() => {});
+api("/api/info").then((info) => { state.info = info; renderAiPill(); renderClinic(); renderAlerts(); updateMic(); }).catch(() => {});
 refresh();
 setInterval(refresh, 2000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
